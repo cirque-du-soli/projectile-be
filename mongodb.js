@@ -11,7 +11,7 @@ mongoose
     console.log("Database failed to connect");
   });
 
-const LogInSchema = new mongoose.Schema({
+const users = new mongoose.Schema({
   username: {
     type: String,
     required: true,
@@ -30,6 +30,6 @@ const LogInSchema = new mongoose.Schema({
   },
 });
 
-const collection = new mongoose.model("Collection1", LogInSchema);
+const userModel = new mongoose.model("Collection1", users);
 
-module.exports = collection;
+module.exports = userModel;
