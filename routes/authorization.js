@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const userModel = require("../mongodb");
+const userModel = require("../models/users");
 const bcrypt = require("bcrypt");
 
 //login request
@@ -37,13 +37,13 @@ router.post("/regi", async (req, res) => {
       return res.json("exist"); //return error/bad/400
     } else {
       const hashedPass = await bcrypt.hash(password, 10);
-      const data = {
+      const newUser = new userModel({
         username: username,
         email: email,
         password: hashedPass,
         role: 0,
-      };
-      await userModel.insertMany([data]);
+      });
+      await newUser.save();
       return res.json("success"); //200 registration successful
     }
   } catch (e) {
