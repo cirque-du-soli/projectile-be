@@ -15,12 +15,14 @@ connectDB();
 // Routes
 const authRouter = require("./routes/authorization");
 const mosaicRouter = require("./routes/mosaics");
+const userSettings = require("./routes/settings")
 
 app.use("/auth", authRouter);
 app.use("/mosaics", mosaicRouter);
+app.use("/settings", userSettings);
 
 // Root route
-app.get("/", (req, res) => {});
+app.get("/", (req, res) => { });
 
 const port = process.env.PORT || 3001;
 app.listen(port, () => {
