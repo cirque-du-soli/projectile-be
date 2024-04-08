@@ -15,7 +15,7 @@ connectDB();
 // Routes
 const authRouter = require("./routes/authorization");
 const mosaicRouter = require("./routes/mosaics");
-const userSettings = require("./routes/settings")
+const userSettings = require("./routes/userSettings")
 
 app.use("/auth", authRouter);
 app.use("/mosaics", mosaicRouter);

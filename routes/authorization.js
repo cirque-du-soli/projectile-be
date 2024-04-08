@@ -42,6 +42,7 @@ router.post("/regi", async (req, res) => {
         email: email,
         password: hashedPass,
         role: 0,
+        profilePicFileName: "default-image.png",
       });
       await newUser.save();
       return res.json("success"); //200 registration successful
