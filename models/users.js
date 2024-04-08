@@ -17,6 +17,10 @@ const users = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  profilePicFileName: {
+    type: String,
+    required: true,
+  },
 });
 
 const userModel = new mongoose.model("Users", users);
