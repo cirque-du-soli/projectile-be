@@ -10,7 +10,7 @@ const upload = multer({ dest: 'uploads/' });
 
 // TODO: Add middleware to authenticate the user and append their info to req.user
 
-router.patch("/ChangeProfilePicture", upload.single('profilePic'), async (req, res) => {
+router.patch("/profilepicture", upload.single('profilePic'), async (req, res) => {
     try {
         /*
         if (!req.user) {
@@ -46,6 +46,29 @@ router.patch("/ChangeProfilePicture", upload.single('profilePic'), async (req, r
     } catch (error) {
         console.error(error);
         res.status(500).send({ message: "Internal server error" });
+    }
+});
+
+router.get("/profilepicture", async (req, res) => {
+    try {
+        /*
+      if (!req.user) {
+          return res.status(401).send({ message: "User not authenticated" });
+      }
+*/
+        const user = await userModel.findById("6613366b5878c63c07a4f1b7");
+        const userProfilePictureFileName = user.profilePicFileName;
+        const fileData = await getFileFromR2(userProfilePictureFileName);
+
+        res.setHeader('Content-Type', fileData.ContentType);
+        res.send(fileData.Body);
+    } catch (error) {
+        console.error(error);
+        if (error.code === 'NoSuchKey') {
+            res.status(404).send({ message: "Profile picture not found" });
+        } else {
+            res.status(500).send({ message: "Internal server error" });
+        }
     }
 });
 
