@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const userModel = require("../models/users");
 const bcrypt = require("bcrypt");
+const { sign } = require("jsonwebtoken");
+const { validateToken } = require("../services/authmiddleware");
 
 //login request
 router.post("/", async (req, res) => {
@@ -14,9 +16,15 @@ router.post("/", async (req, res) => {
     if (check) {
       bcrypt.compare(password, check.password).then((match) => {
         if (!match) {
+          console.log("fail");
           return res.json("invalid password"); //error/bad/400
         } else {
-          return res.json("success"); //200 login successful
+          console.log("success");
+          const accessToken = sign(
+            { username: check.username, id: check._id },
+            process.env.TOKENKEY
+          );
+          res.status(200).json(accessToken); //200 login successful
         }
       });
     } else {
@@ -49,6 +57,22 @@ router.post("/regi", async (req, res) => {
     }
   } catch (e) {
     return res.json("fail"); //return 500?
+  }
+});
+
+//this is the auth-validator that is called when you first open the site
+router.get("/", validateToken, async (req, res) => {
+  const userid = req.userToken.id;
+  try {
+    const user = await userModel.findOne({ _id: userid });
+    if (!user) {
+      res.json({ error: "user doesn't exist" });
+    } else {
+      res.status(200).json(user.username);
+    }
+  } catch (error) {
+    console.log(error);
+    res.json({ error: error });
   }
 });
 

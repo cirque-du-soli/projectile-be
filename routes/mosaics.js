@@ -42,4 +42,19 @@ router.post("/create", async (req, res) => {
   }
 });
 
+router.get("/byUsername", async (req, res) => {
+  const username = req.query.username;
+  try {
+    const userMosaics = await mosaicModel.find({ owner: username });
+    if (!userMosaics || userMosaics.length === 0) {
+      console.log("empty");
+      return res.status(200).json("empty");
+    } else {
+      return res.status(200).json(userMosaics);
+    }
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+});
+
 module.exports = router;
