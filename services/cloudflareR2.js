@@ -24,7 +24,7 @@ function uploadFileToR2(fileStream, fileName, originalName) {
 function deleteFileFromR2(fileKey) {
     const params = {
         Bucket: bucket,
-        Key: fileKey // File key (path and filename)
+        Key: fileKey
     };
 
     s3API.deleteObject(params, function (err, data) {
@@ -36,20 +36,22 @@ function deleteFileFromR2(fileKey) {
     });
 }
 
-function getFileFromR2(fileKey, callback) {
+function getFileFromR2(fileKey) {
     const params = {
         Bucket: bucket,
-        Key: fileKey, // File key (path and filename)
+        Key: fileKey,
     };
 
-    s3API.getObject(params, (err, data) => {
-        if (err) {
-            console.error("Error", err);
-            callback(err, null);
-        } else {
-            console.log("Success");
-            callback(null, data);
-        }
+    return new Promise((resolve, reject) => {
+        s3API.getObject(params, (err, data) => {
+            if (err) {
+                console.error("Error getting object from R2", err);
+                reject(err);
+            } else {
+                console.log("Success getting object from R2");
+                resolve(data);
+            }
+        });
     });
 }
 
