@@ -57,4 +57,20 @@ router.get("/byUsername", async (req, res) => {
   }
 });
 
+router.get("/byID", async (req, res) => {
+  const id = req.query.id;
+  try {
+    const selMosaic = await mosaicModel.findOne({ _id: id });
+    if (!selMosaic) {
+      console.log("nothing here bro");
+      return res.status(400).json("nothing here");
+    } else {
+      console.log(selMosaic);
+      return res.status(200).json(selMosaic);
+    }
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+});
+
 module.exports = router;
