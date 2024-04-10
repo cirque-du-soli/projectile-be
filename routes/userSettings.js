@@ -4,22 +4,27 @@ const router = express.Router();
 const multer = require("multer"); // To handle multipart/form-data
 const userModel = require("../models/users");
 const { uploadFileToR2, deleteFileFromR2, getFileFromR2 } = require("../services/cloudflareR2");
+const { validateToken } = require("../services/authmiddleware");
 
 // Multer setup to handle file uploads
 const upload = multer({ dest: 'uploads/' });
 
-// TODO: Add middleware to authenticate the user and append their info to req.user
-
-router.patch("/profilepicture", upload.single('profilePic'), async (req, res) => {
+router.patch("/profilepicture", validateToken, upload.single('profilePic'), async (req, res) => {
     try {
-        /*
-        if (!req.user) {
-            return res.status(401).send({ message: "User not authenticated" });
-        }
-*/
         if (!req.file) {
             return res.status(400).send({ message: "No file uploaded" });
         }
+
+        const fileType = req.file.mimetype;
+        if (fileType !== 'image/jpeg' && fileType !== 'image/png') {
+            fs.unlink(req.file.path, (err) => { // Delete the uploaded file as it's not a valid type
+                if (err) console.error("Cleanup failed for invalid file type", err);
+            });
+            return res.status(400).send({ message: "Invalid file type. Only JPG and PNG are allowed." });
+        }
+
+        const validatedToken = req.userToken;
+        const userId = validatedToken.id;
 
         const originalFileName = req.file.originalname;
         const fileName = req.file.filename;
@@ -36,9 +41,8 @@ router.patch("/profilepicture", upload.single('profilePic'), async (req, res) =>
             }
         });
 
-        // req.user._id
         // Update the user model with the new profile picture
-        const updatedUser = await userModel.findByIdAndUpdate("6613366b5878c63c07a4f1b7", {
+        const updatedUser = await userModel.findByIdAndUpdate(userId, {
             'profilePicFileName': req.file.filename,
         }, { new: true });
 
@@ -49,14 +53,12 @@ router.patch("/profilepicture", upload.single('profilePic'), async (req, res) =>
     }
 });
 
-router.get("/profilepicture", async (req, res) => {
+router.get("/profilepicture", validateToken, async (req, res) => {
     try {
-        /*
-      if (!req.user) {
-          return res.status(401).send({ message: "User not authenticated" });
-      }
-*/
-        const user = await userModel.findById("6613366b5878c63c07a4f1b7");
+        const validatedToken = req.userToken;
+        const userId = validatedToken.id;
+
+        const user = await userModel.findById(userId);
         const userProfilePictureFileName = user.profilePicFileName;
         const fileData = await getFileFromR2(userProfilePictureFileName);
 
@@ -71,5 +73,50 @@ router.get("/profilepicture", async (req, res) => {
         }
     }
 });
+
+router.patch("/password", validateToken, async (req, res) => {
+    try {
+        const validatedToken = req.userToken;
+        const userId = validatedToken.id;
+        const submittedOldPassword = req.body.oldPassword;
+        const submittedNewPassword = req.body.newPassword;
+
+        const user = await userModel.findById(userId);
+        if (!user) {
+            return res.status(400).json({ message: "User not found" });
+        }
+
+        const match = await bcrypt.compare(submittedOldPassword, user.password);
+        if (!match) {
+            console.log("userSettings; Submitted password didn't match stored password");
+            return res.status(400).json({ message: "Invalid old password" });
+        }
+
+        const hashedPass = await bcrypt.hash(submittedNewPassword, 10);
+        await userModel.findByIdAndUpdate(userId, { password: hashedPass }, { new: true });
+
+        res.status(200).send({ message: "Successfully changed password" });
+    } catch (error) {
+        console.error("Error changing password:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+router.get("/", validateToken, async (req, res) => {
+    try {
+        const validatedToken = req.userToken;
+        const userId = validatedToken.id;
+
+        const user = await userModel.findById(userId);
+        if (!user) {
+            return res.status(400).json({ message: "User not found" });
+        }
+
+        res.status(200).send({ email: user.email, username: user.username });
+    } catch (error) {
+        console.error("Error retrieving user info:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+})
 
 module.exports = router;
