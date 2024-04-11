@@ -17,7 +17,7 @@ router.post("/", async (req, res) => {
       bcrypt.compare(password, check.password).then((match) => {
         if (!match) {
           console.log("fail");
-          return res.json("invalid password"); //error/bad/400
+          return res.status(400).json("invalid password"); //error/bad/400
         } else {
           console.log("success");
           const accessToken = sign(
@@ -28,10 +28,10 @@ router.post("/", async (req, res) => {
         }
       });
     } else {
-      return res.json("notexist"); //400 user not found
+      return res.status(400).json("notexist"); //400 user not found
     }
   } catch (e) {
-    return res.json("fail"); //500
+    return res.status(500).json("fail"); //500
   }
 });
 

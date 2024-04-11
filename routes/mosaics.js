@@ -42,6 +42,53 @@ router.post("/create", async (req, res) => {
   }
 });
 
+router.post("/newColumn", async (req, res) => {
+  console.log("new Column request");
+  console.log(req.body);
+  const { title, _id } = req.body;
+  try {
+    const check = await mosaicModel.findOne({ _id: _id });
+    if (!check) {
+      console.log("_id not found");
+      return res.status(400).json("Mosaic not found");
+    } else {
+      const newColumn = new columnModel({
+        title: title,
+      });
+      check.columns.push(newColumn);
+      // save database
+      await check.save();
+
+      return res.status(200).json("Column created successfully");
+    }
+  } catch (e) {
+    console.error("Error creating Column:", e);
+    return res.status(500).json("Internal server error");
+  }
+});
+
+router.delete("/deleteColumn", async (req, res) => {
+  const columnId = req.query.id;
+  console.log(columnId);
+  try {
+    // Find the mosaic containing the column
+    const mosaic = await mosaicModel.findOne({ "columns._id": columnId });
+    console.log("moasic :" + mosaic);
+    if (!mosaic) {
+      console.log("not found");
+      return res.status(404).json("Mosaic containing the column not found");
+    } else {
+      console.log("deleting");
+      mosaic.columns.pull({ _id: columnId });
+      await mosaic.save();
+      return res.status(200).json("Column deleted successfully");
+    }
+  } catch (error) {
+    console.error("Error deleting column:", error);
+    return res.status(500).json("Internal server error");
+  }
+});
+
 router.get("/byUsername", async (req, res) => {
   const username = req.query.username;
   try {
