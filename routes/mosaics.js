@@ -69,22 +69,43 @@ router.post("/newColumn", async (req, res) => {
 
 router.delete("/deleteColumn", async (req, res) => {
   const columnId = req.query.id;
-  console.log(columnId);
   try {
     // Find the mosaic containing the column
     const mosaic = await mosaicModel.findOne({ "columns._id": columnId });
-    console.log("moasic :" + mosaic);
     if (!mosaic) {
-      console.log("not found");
-      return res.status(404).json("Mosaic containing the column not found");
+      return res.status(400).json("Mosaic containing the column not found");
     } else {
-      console.log("deleting");
       mosaic.columns.pull({ _id: columnId });
       await mosaic.save();
       return res.status(200).json("Column deleted successfully");
     }
   } catch (error) {
     console.error("Error deleting column:", error);
+    return res.status(500).json("Internal server error");
+  }
+});
+
+router.put("/renameColumn", async (req, res) => {
+  const { id, newTitle } = req.body;
+  try {
+    const mosaic = await mosaicModel.findOne({ "columns._id": id });
+    if (!mosaic) {
+      return res.status(400).json("Mosaic containing the column not found");
+    } else {
+      //find index of column to change
+      const columnIndex = mosaic.columns.findIndex(
+        (column) => column._id.toString() === id.toString()
+      );
+      if (columnIndex === -1) {
+        return res.status(400).json("Column not found in the mosaic");
+      }
+      // Update the title of the column
+      mosaic.columns[columnIndex].title = newTitle;
+      await mosaic.save();
+      return res.status(200).json("Column renamed successfully");
+    }
+  } catch (error) {
+    console.error("Error renaming column:", error);
     return res.status(500).json("Internal server error");
   }
 });
