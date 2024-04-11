@@ -3,7 +3,6 @@ const router = express.Router();
 const { mosaicModel, columnModel, tileModel } = require("../models/mosaic");
 
 router.post("/create", async (req, res) => {
-  console.log("create mosaic request");
   const { title, owner } = req.body;
   try {
     const check = await mosaicModel.findOne({ title: title });
@@ -42,9 +41,7 @@ router.post("/create", async (req, res) => {
   }
 });
 
-router.post("/newColumn", async (req, res) => {
-  console.log("new Column request");
-  console.log(req.body);
+router.post("/column", async (req, res) => {
   const { title, _id } = req.body;
   try {
     const check = await mosaicModel.findOne({ _id: _id });
@@ -106,6 +103,41 @@ router.put("/renameColumn", async (req, res) => {
     }
   } catch (error) {
     console.error("Error renaming column:", error);
+    return res.status(500).json("Internal server error");
+  }
+});
+
+router.post("/tile", async (req, res) => {
+  console.log("request received");
+  const { colId, newTile, _id } = req.body;
+  try {
+    const check = await mosaicModel.findOne({ _id: _id });
+    if (!check) {
+      console.log("mosaic not found"); //clean
+      return res.status(400).json("Mosaic not found");
+    } else {
+      console.log("found mosaic");
+      //find index of column
+      const columnIndex = check.columns.findIndex(
+        (column) => column._id.toString() === colId.toString()
+      );
+      console.log("column index: " + columnIndex);
+      if (columnIndex === -1) {
+        return res.status(400).json("Column not found in the mosaic");
+      }
+      //create new tile
+      const addTile = new tileModel({
+        title: newTile,
+      });
+      await addTile.save();
+      //get new tile id
+      const tileId = addTile._id;
+      //add tileID to mosaic
+      check.columns[columnIndex].tiles.push(tileId);
+      await check.save();
+    }
+  } catch (error) {
+    console.error("Error creating tile: ", error);
     return res.status(500).json("Internal server error");
   }
 });
