@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 
 const tileSchema = new mongoose.Schema({
-  refNumber: {
-    type: Number,
+  title: {
+    type: String,
     required: true,
   },
   // Other properties of a tile
@@ -13,7 +13,7 @@ const columnSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  tiles: [tileSchema], // Array of tiles associated with the column
+  tiles: [String], // Array of tiles associated with the column
 });
 
 const mosaicSchema = new mongoose.Schema({
