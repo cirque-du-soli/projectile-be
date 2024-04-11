@@ -5,6 +5,7 @@ const multer = require("multer"); // To handle multipart/form-data
 const userModel = require("../models/users");
 const { uploadFileToR2, deleteFileFromR2, getFileFromR2 } = require("../services/cloudflareR2");
 const { validateToken } = require("../services/authmiddleware");
+const bcrypt = require("bcrypt")
 
 // Multer setup to handle file uploads
 const upload = multer({ dest: 'uploads/' });
