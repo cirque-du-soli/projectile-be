@@ -184,7 +184,8 @@ router.get("/byID", async (req, res) => {
 });
 
 router.get("/tile", async (req, res) => {
-  const id = req.body;
+  const id = req.query.id;
+  console.log("get tile request, id: " + id);
   try {
     const selTile = await tileModel.findOne({ _id: id });
     if (!selTile) {
@@ -195,6 +196,32 @@ router.get("/tile", async (req, res) => {
     }
   } catch (error) {
     return res.status(500).json(error);
+  }
+});
+
+router.delete("/tile", async (req, res) => {
+  const tileId = req.query.id;
+  try {
+    const tile = await tileModel.findOne({ _id: tileId });
+    if (!tile) {
+      return res.status(400).json("tile not found");
+    } else {
+      const updatedMosaic = await mosaicModel.findOneAndUpdate(
+        { "columns.tiles": tileId },
+        { $pull: { "columns.$.tiles": tileId } },
+        { new: true } // Return the updated mosaic
+      );
+
+      if (!updatedMosaic) {
+        return res.status(400).json("Mosaic not found");
+      }
+      await tileModel.deleteOne({ _id: tileId });
+
+      return res.status(200).json("Tile deleted successfully");
+    }
+  } catch (error) {
+    console.error("Error deleting tile:", error);
+    return res.status(500).json("Internal server error");
   }
 });
 
