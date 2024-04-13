@@ -10,21 +10,34 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 // Connect to MongoDB
-connectDB();
+connectDB().then(() => {
+  console.log("S0003 Connected to MongoDB");
 
-// Routes
-const authRouter = require("./routes/authorization");
-const mosaicRouter = require("./routes/mosaics");
-const userSettings = require("./routes/userSettings")
+  // Routes
+  const authRouter = require("./routes/authorization");
+  const mosaicRouter = require("./routes/mosaics");
+  const userSettings = require("./routes/userSettings")
 
-app.use("/auth", authRouter);
-app.use("/mosaics", mosaicRouter);
-app.use("/settings", userSettings);
+  app.use("/auth", authRouter);
+  app.use("/mosaics", mosaicRouter);
+  app.use("/settings", userSettings);
 
-// Root route
-app.get("/", (req, res) => { });
+  // *LAST* Server Basic GET Route: not-accessible when a static page is being served above.
+  app.get("/", (req, res) => { 
+    res.json({
+      message:
+        "Welcome to ProjecTile's Backend API Server. Good news: all is functional. ...Are you sure this is the app you're looking for?"
+    }); //END: response
+  }); //END: initial basic GET
 
-const port = process.env.PORT || 3001;
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+  // Set and Listen on Port
+  const port = process.env.PORT || 3001;
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+  });
+
+}).catch((error) => {
+  console.error("E0003 Database failed to connect: ", error);
+  process.exit(1);
 });
+
