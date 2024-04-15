@@ -95,6 +95,7 @@ router.patch("/password", validateToken, async (req, res) => {
 
         const hashedPass = await bcrypt.hash(submittedNewPassword, 10);
         await userModel.findByIdAndUpdate(userId, { password: hashedPass }, { new: true });
+        console.log("Password succesfully changed");
 
         res.status(200).send({ message: "Successfully changed password" });
     } catch (error) {
