@@ -225,4 +225,21 @@ router.delete("/tile", async (req, res) => {
   }
 });
 
+router.put("/renameTile", async (req, res) => {
+  const { id, name } = req.body;
+  try {
+    const tile = await tileModel.findOne({ _id: id });
+    if (!tile) {
+      return res.status(400).json("Tile not found");
+    } else {
+      tile.title = name;
+      await tile.save();
+      return res.status(200).json("Tile renamed successfully");
+    }
+  } catch (error) {
+    console.error("Error renaming column:", error);
+    return res.status(500).json("Internal server error");
+  }
+});
+
 module.exports = router;
