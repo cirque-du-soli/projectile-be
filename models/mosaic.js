@@ -5,7 +5,15 @@ const tileSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  // Other properties of a tile
+  description: {
+    type: String,
+  },
+  creationDate: {
+    type: Date,
+  },
+  dueDate: {
+    type: Date,
+  },
 });
 
 const columnSchema = new mongoose.Schema({
