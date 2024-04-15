@@ -165,11 +165,63 @@ router.get("/byID", async (req, res) => {
       console.log("nothing here bro");
       return res.status(400).json("nothing here");
     } else {
-      console.log(selMosaic);
+      // okay so this weird lil block adds the tile title to the tile ID
+      // for easy display of the title
+      const numOfColumns = selMosaic.columns.length;
+      for (i = 0; i < numOfColumns; i++) {
+        const numOfTiles = selMosaic.columns[i].tiles.length;
+        for (j = 0; j < numOfTiles; j++) {
+          const tileId = selMosaic.columns[i].tiles[j];
+          const tile = await tileModel.findOne({ _id: tileId });
+          selMosaic.columns[i].tiles[j] += ":" + tile.title;
+        }
+      }
       return res.status(200).json(selMosaic);
     }
   } catch (error) {
     return res.status(500).json(error);
+  }
+});
+
+router.get("/tile", async (req, res) => {
+  const id = req.query.id;
+  console.log("get tile request, id: " + id);
+  try {
+    const selTile = await tileModel.findOne({ _id: id });
+    if (!selTile) {
+      console.log("nothing here bro");
+      return res.status(400).json("tile not found");
+    } else {
+      return res.status(200).json(selTile);
+    }
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+});
+
+router.delete("/tile", async (req, res) => {
+  const tileId = req.query.id;
+  try {
+    const tile = await tileModel.findOne({ _id: tileId });
+    if (!tile) {
+      return res.status(400).json("tile not found");
+    } else {
+      const updatedMosaic = await mosaicModel.findOneAndUpdate(
+        { "columns.tiles": tileId },
+        { $pull: { "columns.$.tiles": tileId } },
+        { new: true } // Return the updated mosaic
+      );
+
+      if (!updatedMosaic) {
+        return res.status(400).json("Mosaic not found");
+      }
+      await tileModel.deleteOne({ _id: tileId });
+
+      return res.status(200).json("Tile deleted successfully");
+    }
+  } catch (error) {
+    console.error("Error deleting tile:", error);
+    return res.status(500).json("Internal server error");
   }
 });
 
