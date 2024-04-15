@@ -135,6 +135,7 @@ router.post("/tile", async (req, res) => {
       //add tileID to mosaic
       check.columns[columnIndex].tiles.push(tileId);
       await check.save();
+      return res.status(200).json("Tile added");
     }
   } catch (error) {
     console.error("Error creating tile: ", error);
