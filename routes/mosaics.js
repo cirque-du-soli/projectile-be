@@ -1,6 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const { mosaicModel, columnModel, tileModel } = require("../models/mosaic");
+const {
+  mosaicModel,
+  columnModel,
+  tileModel,
+  toDoModel,
+} = require("../models/mosaic");
 
 router.post("/create", async (req, res) => {
   const { title, owner } = req.body;
@@ -242,6 +247,27 @@ router.put("/renameTile", async (req, res) => {
     }
   } catch (error) {
     console.error("Error renaming column:", error);
+    return res.status(500).json("Internal server error");
+  }
+});
+
+router.post("/newToDo", async (req, res) => {
+  const { id, name } = req.body;
+  try {
+    const tile = await tileModel.findOne({ _id: id });
+    if (!tile) {
+      return res.status(400).json("tile not found");
+    } else {
+      const newToDo = new toDoModel({
+        title: name,
+        done: false,
+      });
+      tile.toDoList.push(newToDo);
+      await tile.save();
+      return res.status(200).json("To Do item added");
+    }
+  } catch (error) {
+    console.error("Error adding to do item: ", error);
     return res.status(500).json("Internal server error");
   }
 });
