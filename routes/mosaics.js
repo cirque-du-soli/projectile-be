@@ -201,6 +201,7 @@ router.get("/tile", async (req, res) => {
       console.log("nothing here bro");
       return res.status(400).json("tile not found");
     } else {
+      console.log(selTile);
       return res.status(200).json(selTile);
     }
   } catch (error) {
@@ -264,10 +265,34 @@ router.post("/newToDo", async (req, res) => {
       });
       tile.toDoList.push(newToDo);
       await tile.save();
-      return res.status(200).json("To Do item added");
+      return res.status(200).json(tile._id);
     }
   } catch (error) {
     console.error("Error adding to do item: ", error);
+    return res.status(500).json("Internal server error");
+  }
+});
+
+router.put("/toDoStatus", async (req, res) => {
+  const { stat, id } = req.body;
+  try {
+    const tile = await tileModel.findOne({ "toDoList._id": id });
+    if (!tile) {
+      res.status(400).json("Tile not found");
+    } else {
+      const toDoIndex = tile.toDoList.findIndex(
+        (toDo) => toDo._id.toString() === id.toString()
+      );
+      if (toDoIndex === -1) {
+        return res.status(400).json("to do not found in the tile");
+      }
+      // Update the title of the column
+      tile.toDoList[toDoIndex].done = stat;
+      await tile.save();
+      return res.status(200).json(tile._id);
+    }
+  } catch (error) {
+    console.error("Error changing to do status: ", error);
     return res.status(500).json("Internal server error");
   }
 });
