@@ -17,6 +17,7 @@ router.post("/create", async (req, res) => {
       const newMosaic = new mosaicModel({
         title: title,
         owner: owner,
+        members: [],
       });
 
       // create basic template columns

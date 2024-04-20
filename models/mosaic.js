@@ -45,6 +45,7 @@ const mosaicSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  members: [String],
 });
 
 const mosaicModel = new mongoose.model("Mosaic", mosaicSchema);
