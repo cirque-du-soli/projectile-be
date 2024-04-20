@@ -253,6 +253,29 @@ router.put("/renameTile", async (req, res) => {
   }
 });
 
+router.delete("/toDo", async (req, res) => {
+  const id = req.query.id;
+  try {
+    const tile = await tileModel.findOne({ "toDoList._id": id });
+    if (!tile) {
+      return res.status(400).json("tile not found");
+    } else {
+      const toDoIndex = tile.toDoList.findIndex(
+        (toDo) => toDo._id.toString() === id.toString()
+      );
+      if (toDoIndex === -1) {
+        return res.status(400).json("to do not found in the tile");
+      }
+      tile.toDoList.splice(toDoIndex, 1);
+      await tile.save();
+      return res.status(200).json(tile._id);
+    }
+  } catch (error) {
+    console.error("Error deleting tile:", error);
+    return res.status(500).json("Internal server error");
+  }
+});
+
 router.put("/tileDate", async (req, res) => {
   const { date, id } = req.body;
   try {
@@ -266,6 +289,23 @@ router.put("/tileDate", async (req, res) => {
     }
   } catch (error) {
     console.error("Error updating due date:", error);
+    return res.status(500).json("Internal server error");
+  }
+});
+
+router.put("/tileDescription", async (req, res) => {
+  const { id, description } = req.body;
+  try {
+    const tile = await tileModel.findOne({ _id: id });
+    if (!tile) {
+      return res.status(400).json("Tile not found");
+    } else {
+      tile.description = description;
+      await tile.save();
+      return res.status(200).json(tile._id);
+    }
+  } catch (error) {
+    console.error("Error updating description:", error);
     return res.status(500).json("Internal server error");
   }
 });
