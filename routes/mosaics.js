@@ -331,6 +331,29 @@ router.post("/newToDo", async (req, res) => {
   }
 });
 
+router.put("/renameToDo", async (req, res) => {
+  const { id, title } = req.body;
+  try {
+    const tile = await tileModel.findOne({ "toDoList._id": id });
+    if (!tile) {
+      return res.status(400).json("tile not found");
+    } else {
+      const toDoIndex = tile.toDoList.findIndex(
+        (toDo) => toDo._id.toString() === id.toString()
+      );
+      if (toDoIndex === -1) {
+        return res.status(400).json("to do not found in the tile");
+      }
+      tile.toDoList[toDoIndex].title = title;
+      await tile.save();
+      return res.status(200).json(tile._id);
+    }
+  } catch (error) {
+    console.error("Error deleting tile:", error);
+    return res.status(500).json("Internal server error");
+  }
+});
+
 router.put("/toDoStatus", async (req, res) => {
   const { stat, id } = req.body;
   try {
