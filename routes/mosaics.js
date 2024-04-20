@@ -136,7 +136,7 @@ router.post("/tile", async (req, res) => {
         title: newTile,
         description: "Add description...",
         creationDate: Date.now(),
-        dueDate: Date(Date.now() + 7 * 24 * 60 * 60 * 1000), //plus 7 days (in milliseconds)
+        dueDate: Date.now() + 7 * 24 * 60 * 60 * 1000, //plus 7 days (in milliseconds)
       });
       await addTile.save();
       //get new tile id
