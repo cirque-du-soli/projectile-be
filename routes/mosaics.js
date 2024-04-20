@@ -248,7 +248,24 @@ router.put("/renameTile", async (req, res) => {
       return res.status(200).json("Tile renamed successfully");
     }
   } catch (error) {
-    console.error("Error renaming column:", error);
+    console.error("Error renaming tile:", error);
+    return res.status(500).json("Internal server error");
+  }
+});
+
+router.put("/tileDate", async (req, res) => {
+  const { date, id } = req.body;
+  try {
+    const tile = await tileModel.findOne({ _id: id });
+    if (!tile) {
+      return res.status(400).json("Tile not found");
+    } else {
+      tile.dueDate = date;
+      await tile.save();
+      return res.status(200).json(tile._id);
+    }
+  } catch (error) {
+    console.error("Error updating due date:", error);
     return res.status(500).json("Internal server error");
   }
 });
