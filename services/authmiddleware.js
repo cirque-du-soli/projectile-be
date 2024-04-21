@@ -17,4 +17,21 @@ const validateToken = (req, res, next) => {
   }
 };
 
-module.exports = { validateToken };
+const validateTokenWithoutExpress = function (token, callback) {
+  if (!token) {
+    return callback({ error: "User not logged in!" }, null);
+  }
+
+  try {
+    const validToken = verify(token, process.env.TOKENKEY);
+    if (validToken) {
+      callback(null, validToken);
+    } else {
+      callback({ error: "Invalid token!" }, null);
+    }
+  } catch (err) {
+    callback(err, null);
+  }
+}
+
+module.exports = { validateToken, validateTokenWithoutExpress };
