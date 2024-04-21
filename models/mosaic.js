@@ -1,11 +1,30 @@
 const mongoose = require("mongoose");
 
+const toDoSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: true,
+  },
+  done: {
+    type: Boolean,
+  },
+});
+
 const tileSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
   },
-  // Other properties of a tile
+  description: {
+    type: String,
+  },
+  creationDate: {
+    type: Date,
+  },
+  dueDate: {
+    type: Date,
+  },
+  toDoList: [toDoSchema],
 });
 
 const columnSchema = new mongoose.Schema({
@@ -26,14 +45,17 @@ const mosaicSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  members: [String],
 });
 
 const mosaicModel = new mongoose.model("Mosaic", mosaicSchema);
 const columnModel = new mongoose.model("Column", columnSchema);
 const tileModel = new mongoose.model("Tile", tileSchema);
+const toDoModel = new mongoose.model("ToDo", toDoSchema);
 
 module.exports = {
   mosaicModel,
   columnModel,
   tileModel,
+  toDoModel,
 };
