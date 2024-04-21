@@ -6,6 +6,7 @@ const {
   tileModel,
   toDoModel,
 } = require("../models/mosaic");
+const messageModel = require('../models/messages');
 
 router.post("/create", async (req, res) => {
   const { title, owner } = req.body;
@@ -236,6 +237,15 @@ router.delete("/tile", async (req, res) => {
   }
 });
 
+router.get('/:boardId/messages', async (req, res) => {
+  try {
+    const boardId = req.params.boardId;
+    const messages = await messageModel.find({ boardId: boardId });
+    res.json(messages);
+  } catch (error) {
+    console.error(error); // Log the error to the console
+    res.status(500).json({ error: error.message || error.toString() });
+    
 router.put("/renameTile", async (req, res) => {
   const { id, name } = req.body;
   try {
