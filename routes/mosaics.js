@@ -243,9 +243,11 @@ router.get('/:boardId/messages', async (req, res) => {
     const messages = await messageModel.find({ boardId: boardId });
     res.json(messages);
   } catch (error) {
-    console.error(error); // Log the error to the console
+    console.error(error);
     res.status(500).json({ error: error.message || error.toString() });
-    
+  }
+});
+
 router.put("/renameTile", async (req, res) => {
   const { id, name } = req.body;
   try {
