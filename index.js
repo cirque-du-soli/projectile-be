@@ -13,7 +13,7 @@ const server = http.createServer(app);
 // Initialize Socket.IO and pass the server instance and CORS options
 const io = require('socket.io')(server, {
   cors: {
-    origin: `${baseUrl}`,
+    origin: "*",
     methods: ["GET", "POST"],
     allowedHeaders: ["*"],
     credentials: true
