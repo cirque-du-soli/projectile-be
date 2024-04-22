@@ -22,7 +22,7 @@ const io = require('socket.io')(server, {
 // CORS options for Express
 const corsOptions = {
   origin: "http://localhost:3000",
-  methods: ["GET", "POST"],
+  methods: ["GET", "POST", "PUT"],
   allowedHeaders: "*",
   credentials: true
 };
@@ -85,7 +85,7 @@ connectDB().then(() => {
   // Routes
   const authRouter = require("./routes/authorization");
   const mosaicRouter = require("./routes/mosaics");
-  const userSettings = require("./routes/userSettings")
+  const userSettings = require("./routes/userSettings");
 
   app.use("/auth", authRouter);
   app.use("/mosaics", mosaicRouter);
