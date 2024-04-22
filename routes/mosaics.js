@@ -11,16 +11,17 @@ const messageModel = require("../models/messages");
 router.post("/create", async (req, res) => {
   const { title, owner } = req.body;
   try {
-    const check = await mosaicModel.findOne({ title: title });
+    //ensure title is unique to this user
+    const check = await mosaicModel.findOne({ title: title, owner: owner });
     if (check) {
       return res.status(400).json("Mosaic already exists");
     } else {
+      //create mosaic
       const newMosaic = new mosaicModel({
         title: title,
         owner: owner,
         members: [],
       });
-
       // create basic template columns
       const column1 = new columnModel({
         title: "To Do",
@@ -31,15 +32,12 @@ router.post("/create", async (req, res) => {
       const column3 = new columnModel({
         title: "Done",
       });
-
       // add to mosaic
       newMosaic.columns.push(column1);
       newMosaic.columns.push(column2);
       newMosaic.columns.push(column3);
-
       // save database
       await newMosaic.save();
-
       return res.status(200).json("Mosaic created successfully");
     }
   } catch (e) {
@@ -190,6 +188,7 @@ router.get("/byID", async (req, res) => {
       return res.status(200).json(selMosaic);
     }
   } catch (error) {
+    console.log(error);
     return res.status(500).json(error);
   }
 });
@@ -400,13 +399,15 @@ router.put("/updateTilesOrder", async (req, res) => {
     }
 
     // Find the column within the mosaic
-    const columnToUpdate = mosaic.columns.find(col => col._id.toString() === columnId);
+    const columnToUpdate = mosaic.columns.find(
+      (col) => col._id.toString() === columnId
+    );
     if (!columnToUpdate) {
       return res.status(404).json({ error: "Column not found within mosaic" });
     }
 
     // Update the tiles order in the column
-    columnToUpdate.tiles = newTilesOrder.map(tile => tile.split(':')[0]);;
+    columnToUpdate.tiles = newTilesOrder.map((tile) => tile.split(":")[0]);
     await mosaic.save();
     res.status(200).json({ message: "Tile order updated successfully" });
   } catch (error) {
