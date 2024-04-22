@@ -5,6 +5,7 @@ require("dotenv").config();
 const http = require('http');
 const messageModel = require('./models/messages');
 const { validateTokenWithoutExpress } = require('./services/authmiddleware');
+const baseUrl = process.env.BASE_URL_FR_END;
 
 const app = express();
 const server = http.createServer(app);
@@ -12,7 +13,7 @@ const server = http.createServer(app);
 // Initialize Socket.IO and pass the server instance and CORS options
 const io = require('socket.io')(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: `${baseUrl}`,
     methods: ["GET", "POST"],
     allowedHeaders: ["*"],
     credentials: true
@@ -21,7 +22,7 @@ const io = require('socket.io')(server, {
 
 // CORS options for Express
 const corsOptions = {
-  origin: "http://localhost:3000",
+  origin: `${baseUrl}`,
   methods: ["GET", "POST"],
   allowedHeaders: "*",
   credentials: true
