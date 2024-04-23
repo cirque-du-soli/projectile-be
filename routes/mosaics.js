@@ -389,6 +389,23 @@ router.put("/toDoStatus", async (req, res) => {
   }
 });
 
+router.put("/assignTile", async (req, res) => {
+  const { member, id } = req.body;
+  try {
+    const tile = await tileModel.findOne({ _id: id });
+    if (!tile) {
+      res.status(400).json("Tile not found");
+    } else {
+      tile.assigned = member;
+      await tile.save();
+      return res.status(200).json(tile._id);
+    }
+  } catch (error) {
+    console.error("Error assigning user to tile: ", error);
+    return res.status(500).json("Internal server error");
+  }
+});
+
 router.put("/updateTilesOrder", async (req, res) => {
   try {
     const { columnId, newTilesOrder, mosaicId } = req.body;
