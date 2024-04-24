@@ -87,10 +87,14 @@ connectDB().then(() => {
   const authRouter = require("./routes/authorization");
   const mosaicRouter = require("./routes/mosaics");
   const userSettings = require("./routes/userSettings");
+  const userSearchRouter = require("./routes/users");
+
 
   app.use("/auth", authRouter);
   app.use("/mosaics", mosaicRouter);
   app.use("/settings", userSettings);
+  app.use("/users", userSearchRouter);
+
 
   // *LAST* Server Basic GET Route: not-accessible when a static page is being served above.
   app.get("/", (req, res) => {
