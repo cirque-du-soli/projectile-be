@@ -47,6 +47,27 @@ router.post("/create", async (req, res) => {
   }
 });
 
+// Route to delete a mosaic
+router.delete("/:mosaicId", async (req, res) => {
+  const mosaicId = req.params.mosaicId; // Retrieve mosaicId from URL params
+  try {
+    // Find the mosaic by ID and delete it
+    const result = await mosaicModel.deleteOne({ _id: mosaicId });
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: "Mosaic not found" });
+    }
+
+    return res.status(200).json({ message: "Mosaic deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting mosaic:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+
+
+
 router.post("/addMember", async (req, res) => {
   const { selectedUsers, mosaicId } = req.body;
   try {

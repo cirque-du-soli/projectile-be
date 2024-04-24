@@ -10,8 +10,8 @@ router.get("/search", async (req, res) => {
     // Search for users in the database based on the query
     const users = await userModel.find({
       $or: [
-        { username: { $regex: query, $options: "i" } }, // Search by username (case-insensitive)
-        { email: { $regex: query, $options: "i" } }, // Search by email (case-insensitive)
+        { username: { $regex: `^${query}$`, $options: "i" } }, // Search by username (case-insensitive)
+        { email: { $regex: `^${query}$`, $options: "i" } }, // Search by email (case-insensitive)
       ],
     });
 
