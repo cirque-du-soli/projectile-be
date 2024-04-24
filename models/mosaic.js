@@ -25,6 +25,9 @@ const tileSchema = new mongoose.Schema({
     type: Date,
   },
   toDoList: [toDoSchema],
+  assigned: {
+    type: String,
+  },
 });
 
 const columnSchema = new mongoose.Schema({

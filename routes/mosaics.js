@@ -7,6 +7,7 @@ const {
   toDoModel,
 } = require("../models/mosaic");
 const messageModel = require("../models/messages");
+const userModel = require("../models/users");
 
 router.post("/create", async (req, res) => {
   const { title, owner } = req.body;
@@ -43,6 +44,87 @@ router.post("/create", async (req, res) => {
   } catch (e) {
     console.error("Error creating mosaic:", e);
     return res.status(500).json("Internal server error");
+  }
+});
+
+// Route to delete a mosaic
+router.delete("/:mosaicId", async (req, res) => {
+  const mosaicId = req.params.mosaicId; // Retrieve mosaicId from URL params
+  try {
+    // Find the mosaic by ID and delete it
+    const result = await mosaicModel.deleteOne({ _id: mosaicId });
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: "Mosaic not found" });
+    }
+
+    return res.status(200).json({ message: "Mosaic deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting mosaic:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+
+
+
+router.post("/addMember", async (req, res) => {
+  const { selectedUsers, mosaicId } = req.body;
+  try {
+    // Find the mosaic by ID
+    const mosaic = await mosaicModel.findById(mosaicId);
+    if (!mosaic) {
+      return res.status(404).json("Mosaic not found");
+    }
+
+    // If selectedUsers is empty, remove all members from the mosaic
+    if (selectedUsers.length === 0) {
+      mosaic.members = [];
+    } else {
+      // Iterate over the selectedUsers array and extract userIds
+      const userIds = selectedUsers.map((user) => user._id);
+
+      // Iterate over the selectedUsers array and add each user to the mosaic's members array
+      userIds.forEach(async (userId) => {
+        // Check if the user is already a member of the mosaic
+        if (!mosaic.members.includes(userId)) {
+          mosaic.members.push(userId);
+        }
+      });
+    }
+
+    await mosaic.save();
+
+    return res.status(200).json("Users added to mosaic members successfully");
+  } catch (error) {
+    console.error("Error adding users to mosaic members:", error);
+    return res.status(500).json("Internal server error");
+  }
+});
+
+router.get("/:mosaicId/collaborators", async (req, res) => {
+  const { mosaicId } = req.params;
+
+  try {
+    // Find the mosaic by ID
+    const mosaic = await mosaicModel.findById(mosaicId);
+
+    if (!mosaic) {
+      return res.status(404).json("Mosaic not found");
+    }
+
+    // Fetch member data based on member IDs
+    const collaborators = await Promise.all(
+      mosaic.members.map(async (memberId) => {
+        const member = await userModel.findById(memberId);
+        return member ? { id: member._id, username: member.username } : null;
+      })
+    );
+
+    res.status(200).json(collaborators.filter((member) => member)); // Filter out null values
+  } catch (error) {
+    console.error("Error fetching current collaborators:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
@@ -153,16 +235,28 @@ router.post("/tile", async (req, res) => {
 
 router.get("/byUsername", async (req, res) => {
   const username = req.query.username;
+
   try {
-    const userMosaics = await mosaicModel.find({ owner: username });
+    // Fetch the current user's ID
+    const currentUser = await userModel.findOne({ username });
+
+    // Find mosaics where the owner is the specified username or the username appears in the members array
+    const userMosaics = await mosaicModel.find({
+      $or: [
+        { owner: username }, // Find mosaics where the owner is the current user's ID
+        { members: currentUser._id }, // Find mosaics where the current user's ID appears in the members array
+      ],
+    });
+
     if (!userMosaics || userMosaics.length === 0) {
-      console.log("empty");
-      return res.status(200).json("empty");
+      console.log("No mosaics found for the user.");
+      return res.status(200).json("No mosaics found for the user.");
     } else {
       return res.status(200).json(userMosaics);
     }
   } catch (error) {
-    return res.status(500).json(error);
+    console.error("Error fetching user mosaics:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 });
 
@@ -385,6 +479,23 @@ router.put("/toDoStatus", async (req, res) => {
     }
   } catch (error) {
     console.error("Error changing to do status: ", error);
+    return res.status(500).json("Internal server error");
+  }
+});
+
+router.put("/assignTile", async (req, res) => {
+  const { member, id } = req.body;
+  try {
+    const tile = await tileModel.findOne({ _id: id });
+    if (!tile) {
+      res.status(400).json("Tile not found");
+    } else {
+      tile.assigned = member;
+      await tile.save();
+      return res.status(200).json(tile._id);
+    }
+  } catch (error) {
+    console.error("Error assigning user to tile: ", error);
     return res.status(500).json("Internal server error");
   }
 });
