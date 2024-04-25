@@ -9,16 +9,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:  # Define environment variables at the job level
-      BASE_URL_FR_END: ${{ env.BASE_URL }}
-      CLOUDFLARE_R2_ACCESS_KEY_ID: ${{ env.CLOUDFLARE_R2_ACCESS_KEY_ID }}
-      CLOUDFLARE_R2_BUCKET: ${{ env.CLOUDFLARE_R2_BUCKET }}
-      CLOUDFLARE_R2_ENDPOINT: ${{ env.CLOUDFLARE_R2_ENDPOINT }}
-      CLOUDFLARE_R2_SECRET_ACCESS_KEY: ${{ env.CLOUDFLARE_R2_SECRET_ACCESS_KEY }}
-      DBCONNECT: ${{ env.DBCONNECT }}
-      DBLOCAL: ${{ env.DBLOCAL }}
-      PORT: ${{ env.PORT }}
-      TOKENKEY: ${{ env.TOKENKEY }}
 
     strategy:
       matrix:
@@ -26,6 +16,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
@@ -34,14 +25,8 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # - name: Run linting
-      #  run: npm run lint # Optional: run if you have a linting script
-
-      #  - name: Build
-      #    run: npm run build # Optional: run if your project needs a build step
-
       - name: Run tests
-        env:  # Set environment variables for this step
+        env:  # Define environment variables using secrets for this step
           BASE_URL_FR_END: ${{ secrets.BASE_URL_FR_END }}
           CLOUDFLARE_R2_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_R2_ACCESS_KEY_ID }}
           CLOUDFLARE_R2_BUCKET: ${{ secrets.CLOUDFLARE_R2_BUCKET }}
@@ -52,3 +37,4 @@ jobs:
           PORT: ${{ secrets.PORT }}
           TOKENKEY: ${{ secrets.TOKENKEY }}
         run: npm test
+
