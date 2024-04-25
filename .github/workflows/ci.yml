@@ -1,0 +1,40 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x, 18.x] # Define Node.js versions you want to test against
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        env:  # Define environment variables for this step
+          BASE_URL_FR_END: $BASE_URL  # Assuming $BASE_URL is set in the runner environment
+          CLOUDFLARE_R2_ACCESS_KEY_ID: $CLOUDFLARE_R2_ACCESS_KEY_ID
+          CLOUDFLARE_R2_BUCKET: $CLOUDFLARE_R2_BUCKET
+          CLOUDFLARE_R2_ENDPOINT: $CLOUDFLARE_R2_ENDPOINT
+          CLOUDFLARE_R2_SECRET_ACCESS_KEY: $CLOUDFLARE_R2_SECRET_ACCESS_KEY
+          DBCONNECT: $DBCONNECT
+          DBLOCAL: $DBLOCAL
+          PORT: $PORT
+          TOKENKEY: $TOKENKEY
+        run: npm test
+
