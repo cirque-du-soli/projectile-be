@@ -32,7 +32,7 @@ const corsOptions = {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors(corsOptions));
-
+/*
 // Websocket server events
 io.on("connection", (socket) => {
   console.log("New client connected");
@@ -94,7 +94,20 @@ io.on("connection", (socket) => {
     });
   });
 });
+*/
+const authRouter = require("./routes/authorization");
+const mosaicRouter = require("./routes/mosaics");
+const userSettings = require("./routes/userSettings");
+const userSearchRouter = require("./routes/users");
 
+app.use("/auth", authRouter);
+app.use("/mosaics", mosaicRouter);
+app.use("/settings", userSettings);
+app.use("/users", userSearchRouter);
+
+module.exports = app;
+
+/*
 // Connect to MongoDB
 connectDB()
   .then(() => {
@@ -129,3 +142,4 @@ connectDB()
     console.error("E0003 Database failed to connect: ", error);
     process.exit(1);
   });
+  */
