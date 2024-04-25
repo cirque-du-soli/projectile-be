@@ -23,7 +23,7 @@ const io = require("socket.io")(server, {
 // CORS options for Express
 const corsOptions = {
   origin: `${baseUrl}`,
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   allowedHeaders: "*",
   credentials: true,
 };
@@ -95,11 +95,13 @@ connectDB()
     const mosaicRouter = require("./routes/mosaics");
     const userSettings = require("./routes/userSettings");
     const userSearchRouter = require("./routes/users");
+    const adminRouter = require("./routes/admin");
 
     app.use("/auth", authRouter);
     app.use("/mosaics", mosaicRouter);
     app.use("/settings", userSettings);
     app.use("/users", userSearchRouter);
+    app.use("/admin", adminRouter); 
 
     // *LAST* Server Basic GET Route: not-accessible when a static page is being served above.
     app.get("/", (req, res) => {
