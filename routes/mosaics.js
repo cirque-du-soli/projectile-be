@@ -39,7 +39,10 @@ router.post("/create", async (req, res) => {
       newMosaic.columns.push(column3);
       // save database
       await newMosaic.save();
-      return res.status(200).json({ message: "Mosaic created successfully", mosaicId: newMosaic._id });
+      return res.status(200).json({
+        message: "Mosaic created successfully",
+        mosaicId: newMosaic._id,
+      });
     }
   } catch (e) {
     console.error("Error creating mosaic:", e);
@@ -63,10 +66,6 @@ router.delete("/:mosaicId", async (req, res) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 });
-
-
-
-
 
 router.post("/addMember", async (req, res) => {
   const { selectedUsers, mosaicId } = req.body;
@@ -277,6 +276,14 @@ router.get("/byID", async (req, res) => {
           const tileId = selMosaic.columns[i].tiles[j];
           const tile = await tileModel.findOne({ _id: tileId });
           selMosaic.columns[i].tiles[j] += ":" + tile.title;
+        }
+      }
+      const numOfMembers = selMosaic.members.length;
+      for (i = 0; i < numOfMembers; i++) {
+        console.log("userId: " + selMosaic.members[i]);
+        const user = await userModel.findOne({ _id: selMosaic.members[i] });
+        if (user) {
+          selMosaic.members[i] = user.username;
         }
       }
       return res.status(200).json(selMosaic);
