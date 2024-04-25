@@ -9,6 +9,16 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:  # Define environment variables at the job level
+      BASE_URL_FR_END: ${{ env.BASE_URL }}
+      CLOUDFLARE_R2_ACCESS_KEY_ID: ${{ env.CLOUDFLARE_R2_ACCESS_KEY_ID }}
+      CLOUDFLARE_R2_BUCKET: ${{ env.CLOUDFLARE_R2_BUCKET }}
+      CLOUDFLARE_R2_ENDPOINT: ${{ env.CLOUDFLARE_R2_ENDPOINT }}
+      CLOUDFLARE_R2_SECRET_ACCESS_KEY: ${{ env.CLOUDFLARE_R2_SECRET_ACCESS_KEY }}
+      DBCONNECT: ${{ env.DBCONNECT }}
+      DBLOCAL: ${{ env.DBLOCAL }}
+      PORT: ${{ env.PORT }}
+      TOKENKEY: ${{ env.TOKENKEY }}
 
     strategy:
       matrix:
