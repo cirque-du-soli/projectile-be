@@ -39,7 +39,7 @@ router.post("/create", async (req, res) => {
       newMosaic.columns.push(column3);
       // save database
       await newMosaic.save();
-      return res.status(200).json("Mosaic created successfully");
+      return res.status(200).json({ message: "Mosaic created successfully", mosaicId: newMosaic._id });
     }
   } catch (e) {
     console.error("Error creating mosaic:", e);
