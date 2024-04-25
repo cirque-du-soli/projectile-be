@@ -32,7 +32,7 @@ jobs:
 
       - name: Run tests
         env:  # Set environment variables for this step
-          BASE_URL_FR_END: ${{ secrets.BASE_URL }}
+          BASE_URL_FR_END: ${{ secrets.BASE_URL_FR_END }}
           CLOUDFLARE_R2_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_R2_ACCESS_KEY_ID }}
           CLOUDFLARE_R2_BUCKET: ${{ secrets.CLOUDFLARE_R2_BUCKET }}
           CLOUDFLARE_R2_ENDPOINT: ${{ secrets.CLOUDFLARE_R2_ENDPOINT }}
