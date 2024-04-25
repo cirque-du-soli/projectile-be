@@ -26,15 +26,15 @@ jobs:
         run: npm install
 
       - name: Run tests
-        env:  # Define environment variables using secrets for this step
-          BASE_URL_FR_END: ${{ secrets.BASE_URL_FR_END }}
-          CLOUDFLARE_R2_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_R2_ACCESS_KEY_ID }}
-          CLOUDFLARE_R2_BUCKET: ${{ secrets.CLOUDFLARE_R2_BUCKET }}
-          CLOUDFLARE_R2_ENDPOINT: ${{ secrets.CLOUDFLARE_R2_ENDPOINT }}
-          CLOUDFLARE_R2_SECRET_ACCESS_KEY: ${{ secrets.CLOUDFLARE_R2_SECRET_ACCESS_KEY }}
-          DBCONNECT: ${{ secrets.DBCONNECT }}
-          DBLOCAL: ${{ secrets.DBLOCAL }}
-          PORT: ${{ secrets.PORT }}
-          TOKENKEY: ${{ secrets.TOKENKEY }}
+        env:  # Define environment variables for this step
+          BASE_URL_FR_END: $BASE_URL  # Assuming $BASE_URL is set in the runner environment
+          CLOUDFLARE_R2_ACCESS_KEY_ID: $CLOUDFLARE_R2_ACCESS_KEY_ID
+          CLOUDFLARE_R2_BUCKET: $CLOUDFLARE_R2_BUCKET
+          CLOUDFLARE_R2_ENDPOINT: $CLOUDFLARE_R2_ENDPOINT
+          CLOUDFLARE_R2_SECRET_ACCESS_KEY: $CLOUDFLARE_R2_SECRET_ACCESS_KEY
+          DBCONNECT: $DBCONNECT
+          DBLOCAL: $DBLOCAL
+          PORT: $PORT
+          TOKENKEY: $TOKENKEY
         run: npm test
 
