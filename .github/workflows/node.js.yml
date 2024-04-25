@@ -1,0 +1,46 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x, 14.x, 16.x, 18.x] # Define Node.js versions you want to test against
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Set environment variables
+        run: |
+          echo "BASE_URL=${{ secrets.BASE_URL_FR_END }}" >> $GITHUB_ENV
+          echo "CLOUDFLARE_R2_ACCESS_KEY_ID=${{ secrets.CLOUDFLARE_R2_ACCESS_KEY_ID }}" >> $GITHUB_ENV
+          echo "CLOUDFLARE_R2_BUCKET=${{ secrets.CLOUDFLARE_R2_BUCKET }}" >> $GITHUB_ENV
+          echo "CLOUDFLARE_R2_ENDPOINT=${{ secrets.CLOUDFLARE_R2_ENDPOINT }}" >> $GITHUB_ENV
+          echo "CLOUDFLARE_R2_SECRET_ACCESS_KEY=${{ secrets.CLOUDFLARE_R2_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
+          echo "DBCONNECT=${{ secrets.DBCONNECT }}" >> $GITHUB_ENV
+          echo "DBLOCAL=${{ secrets.DBLOCAL }}" >> $GITHUB_ENV
+          echo "PORT=${{ secrets.PORT }}" >> $GITHUB_ENV
+          echo "TOKENKEY=${{ secrets.TOKENKEY }}" >> $GITHUB_ENV
+
+      # - name: Run linting
+      #  run: npm run lint # Optional: run if you have a linting script
+
+      #  - name: Build
+      #    run: npm run build # Optional: run if your project needs a build step
+
+      - name: Run tests
+        run: npm test
