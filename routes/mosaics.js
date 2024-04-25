@@ -51,7 +51,7 @@ router.post("/create", async (req, res) => {
 });
 
 // Route to delete a mosaic
-router.delete("/:mosaicId", async (req, res) => {
+router.delete("/mosaic/:mosaicId", async (req, res) => {
   const mosaicId = req.params.mosaicId; // Retrieve mosaicId from URL params
   try {
     // Find the mosaic by ID and delete it

@@ -43,6 +43,16 @@ io.on("connection", (socket) => {
     console.log(`User joined board: ${boardId}`);
   });
 
+  // socket.on("joinMosaic", (id) => {
+  //   socket.join(id);
+  //   console.log(`User joined mosaic: ${id}`);
+  // });
+
+  // socket.on("mosaic_info", (id) => {
+  //   console.log("received update request");
+  //   io.to(id).emit("mosaic_info");
+  // });
+
   // Handle incoming chat messages
   socket.on("chatMessage", ({ boardId, accessToken, messageText }) => {
     validateTokenWithoutExpress(accessToken, (err, decodedToken) => {
