@@ -43,4 +43,14 @@ jobs:
       #    run: npm run build # Optional: run if your project needs a build step
 
       - name: Run tests
+        env:  # Set environment variables for this step
+          BASE_URL_FR_END: ${{ secrets.BASE_URL }}
+          CLOUDFLARE_R2_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_R2_ACCESS_KEY_ID }}
+          CLOUDFLARE_R2_BUCKET: ${{ secrets.CLOUDFLARE_R2_BUCKET }}
+          CLOUDFLARE_R2_ENDPOINT: ${{ secrets.CLOUDFLARE_R2_ENDPOINT }}
+          CLOUDFLARE_R2_SECRET_ACCESS_KEY: ${{ secrets.CLOUDFLARE_R2_SECRET_ACCESS_KEY }}
+          DBCONNECT: ${{ secrets.DBCONNECT }}
+          DBLOCAL: ${{ secrets.DBLOCAL }}
+          PORT: ${{ secrets.PORT }}
+          TOKENKEY: ${{ secrets.TOKENKEY }}
         run: npm test
