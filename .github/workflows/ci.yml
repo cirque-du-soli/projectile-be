@@ -24,18 +24,6 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Set environment variables
-        run: |
-          echo "BASE_URL=${{ secrets.BASE_URL_FR_END }}" >> $GITHUB_ENV
-          echo "CLOUDFLARE_R2_ACCESS_KEY_ID=${{ secrets.CLOUDFLARE_R2_ACCESS_KEY_ID }}" >> $GITHUB_ENV
-          echo "CLOUDFLARE_R2_BUCKET=${{ secrets.CLOUDFLARE_R2_BUCKET }}" >> $GITHUB_ENV
-          echo "CLOUDFLARE_R2_ENDPOINT=${{ secrets.CLOUDFLARE_R2_ENDPOINT }}" >> $GITHUB_ENV
-          echo "CLOUDFLARE_R2_SECRET_ACCESS_KEY=${{ secrets.CLOUDFLARE_R2_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
-          echo "DBCONNECT=${{ secrets.DBCONNECT }}" >> $GITHUB_ENV
-          echo "DBLOCAL=${{ secrets.DBLOCAL }}" >> $GITHUB_ENV
-          echo "PORT=${{ secrets.PORT }}" >> $GITHUB_ENV
-          echo "TOKENKEY=${{ secrets.TOKENKEY }}" >> $GITHUB_ENV
-
       # - name: Run linting
       #  run: npm run lint # Optional: run if you have a linting script
 
