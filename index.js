@@ -23,7 +23,7 @@ const io = require("socket.io")(server, {
 // CORS options for Express
 const corsOptions = {
   origin: `${baseUrl}`,
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   allowedHeaders: "*",
   credentials: true,
 };
