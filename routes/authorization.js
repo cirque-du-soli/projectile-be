@@ -68,7 +68,8 @@ router.get("/", validateToken, async (req, res) => {
     if (!user) {
       res.json({ error: "user doesn't exist" });
     } else {
-      res.status(200).json(user.username);
+      console.log("user found!!!!!!! " + user);
+      res.status(200).json(user); // SOLI RISKY CHANGE FIXME: TODO: revert to : res.status(200).json(user.username);
     }
   } catch (error) {
     console.log(error);
