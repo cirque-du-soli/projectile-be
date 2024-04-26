@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x, 18.x] # Define Node.js versions you want to test against
+        node-version: [16.x, 18.x] 
 
     steps:
       - uses: actions/checkout@v2
@@ -26,8 +26,8 @@ jobs:
         run: npm install
 
       - name: Run tests
-        env:  # Define environment variables for this step
-          BASE_URL_FR_END: $BASE_URL  # Assuming $BASE_URL is set in the runner environment
+        env: 
+          BASE_URL_FR_END: $BASE_URL 
           CLOUDFLARE_R2_ACCESS_KEY_ID: $CLOUDFLARE_R2_ACCESS_KEY_ID
           CLOUDFLARE_R2_BUCKET: $CLOUDFLARE_R2_BUCKET
           CLOUDFLARE_R2_ENDPOINT: $CLOUDFLARE_R2_ENDPOINT
