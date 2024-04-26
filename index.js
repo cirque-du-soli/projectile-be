@@ -99,11 +99,13 @@ const authRouter = require("./routes/authorization");
 const mosaicRouter = require("./routes/mosaics");
 const userSettings = require("./routes/userSettings");
 const userSearchRouter = require("./routes/users");
+const adminRouter = require("./routes/admin");
 
 app.use("/auth", authRouter);
 app.use("/mosaics", mosaicRouter);
 app.use("/settings", userSettings);
 app.use("/users", userSearchRouter);
+app.use("/admin", adminRouter);
 
 module.exports = app;
 
@@ -120,11 +122,11 @@ connectDB()
     const userSearchRouter = require("./routes/users");
     const adminRouter = require("./routes/admin");
 
+    app.use("/admin", adminRouter); 
     app.use("/auth", authRouter);
     app.use("/mosaics", mosaicRouter);
     app.use("/settings", userSettings);
     app.use("/users", userSearchRouter);
-    app.use("/admin", adminRouter); 
 
     // *LAST* Server Basic GET Route: not-accessible when a static page is being served above.
     app.get("/", (req, res) => {
