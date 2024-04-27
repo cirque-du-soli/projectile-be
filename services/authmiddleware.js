@@ -10,6 +10,8 @@ const validateToken = (req, res, next) => {
     const validToken = verify(accessToken, process.env.TOKENKEY);
     if (validToken) {
       req.userToken = validToken;
+      console.log("S0021: Token validated");
+      console.log(validToken);
       return next();
     }
   } catch (err) {

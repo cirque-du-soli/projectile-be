@@ -21,6 +21,25 @@ const users = new mongoose.Schema({
     type: String,
     required: true,
   },
+  isAdmin: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
+  isSoftDeleted: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
+  isBanned: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
+},
+  {
+  timestamps: true,
+
 });
 
 const userModel = new mongoose.model("Users", users);
